@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Create an instance of Axios with base URL
-const API = axios.create({ baseURL: "http://localhost:5000" });
+const API = axios.create({ baseURL: "https://render.com/docs/web-services#port-binding" });
 
 // Adding interceptors to include the Authorization token in requests
 API.interceptors.request.use(
