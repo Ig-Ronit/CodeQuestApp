@@ -20,11 +20,11 @@ const Question = ({ question }) => {
     <div className="display-question-container">
       <div className="display-votes-ans">
         <p>{votes}</p>
-        <p>votes</p>
+        <p>Votes</p>
       </div>
       <div className="display-votes-ans">
         <p>{answers}</p>
-        <p>answers</p>
+        <p>Answers</p>
       </div>
       <div className="display-question-details">
         <Link to={`/Question/${question._id}`} className="question-title-link">
@@ -37,7 +37,7 @@ const Question = ({ question }) => {
             ))}
           </div>
           <p className="display-time">
-            Asked {moment(askedOn).fromNow()} by {username}
+            {moment(askedOn).fromNow()} By {username}
           </p>
         </div>
       </div>

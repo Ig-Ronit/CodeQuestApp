@@ -37,7 +37,7 @@ const Displayanswer = ({ question, handleshare }) => {
                 )}
               </div>
               <div>
-                <p>answered {moment(ans.answeredon).fromNow()}</p>
+                <p>{moment(ans.answeredon).fromNow()}</p>
                 <Link
                   to={`/Users/${ans.userid}`}
                   className="user-link"

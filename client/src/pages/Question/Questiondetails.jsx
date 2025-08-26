@@ -98,8 +98,6 @@ const Questiondetails = () => {
           {questionlist.data
             .filter((question) => question._id === id)
             .map((question) => {
-              console.log("question object:", question);
-              console.log("question.userid:", question.userid);
               // Fallback if question.userid is missing
               const userIdForProfile =
                 question.userid ||
@@ -148,7 +146,7 @@ const Questiondetails = () => {
                             )}
                           </div>
                           <div>
-                            <p>Asked {moment(question.askedon).fromNow()}</p>
+                            <p>{moment(question.askedon).fromNow()}</p>
                             <Link
                               to={`/Users/${userIdForProfile}`}
                               className="user-link"
@@ -175,7 +173,7 @@ const Questiondetails = () => {
                   </section>
                   {question.noofanswers !== 0 && (
                     <section>
-                      <h3>{question.noofanswers} Answers</h3>
+                      <h3>{question.noofanswers} Answered</h3>
                       <Displayanswer
                         key={question._id}
                         question={question}
