@@ -1,7 +1,9 @@
 import axios from "axios";
 
-// Create an instance of Axios with base URL
-const API = axios.create({ baseURL: "https://render.com/docs/web-services#port-binding" });
+// Use environment variable or fallback to localhost
+const API = axios.create({
+  baseURL: process.env.REACT_APP_API_URL || "https://codequestapp.onrender.com",
+});
 
 // Adding interceptors to include the Authorization token in requests
 API.interceptors.request.use(
@@ -12,21 +14,19 @@ API.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-export default API; // Default export
+export default API;
 
 // Auth API calls
-export const login = (authdata) => API.post("user/login", authdata);
-export const signup = (authdata) => API.post("user/signup", authdata);
+export const login = (authdata) => API.post("/user/login", authdata);
+export const signup = (authdata) => API.post("/user/signup", authdata);
 
 // User API calls
 export const getallusers = () => API.get("/user/getallusers");
 export const updateprofile = (id, updatedata) =>
-  API.patch(`user/update/${id}`, updatedata);
+  API.patch(`/user/update/${id}`, updatedata);
 
 // Questions API calls
 export const postquestion = (questiondata) =>
