@@ -7,9 +7,7 @@ import questionroutes from "./routes/question.js"
 import answerroutes from "./routes/answer.js"
 
 const app = express();
-dotenv.config();
-
-// Load environment variables from server/dot.env
+dotenv.config({ path: "./models/.env" });
 
 
 app.use(express.json({ limit: "30mb", extended: true }))
