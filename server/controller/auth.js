@@ -2,14 +2,6 @@ import users from "../models/auth.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-const getJwtSecret = () => {
-  if (!process.env.JWT_SECRET) {
-    console.warn("⚠️ JWT_SECRET is missing! Using fallback secret.");
-    return "fallback_secret"; // Temporary secret to prevent crash
-  }
-  return process.env.JWT_SECRET;
-};
-
 export const signup = async (req, res) => {
   const { name, email, password } = req.body;
   try {
@@ -29,25 +21,17 @@ export const signup = async (req, res) => {
       password: hashedPassword,
     });
 
-    // Debug log JWT secret
-    console.log("JWT_SECRET (signup):", getJwtSecret());
-
     // Generate JWT token
     const token = jwt.sign(
-      {
-        email: newUser.email,
-        id: newUser._id,
-      },
-      getJwtSecret(),
-      { expiresIn: "1h" }
+      { email: newUser.email, id: newUser._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" } // You can shorten this for better security
     );
 
     // Send response without password
-    res
-      .status(201)
-      .json({ result: { ...newUser._doc, password: undefined }, token });
+    res.status(201).json({ result: { ...newUser._doc, password: undefined }, token });
   } catch (error) {
-    console.error("Signup error:", error.message);
+    console.error(error.message);
     res.status(500).json({ message: "Something went wrong..." });
   }
 };
@@ -62,33 +46,22 @@ export const login = async (req, res) => {
     }
 
     // Compare the password with the hashed password
-    const isPasswordCorrect = await bcrypt.compare(
-      password,
-      existingUser.password
-    );
+    const isPasswordCorrect = await bcrypt.compare(password, existingUser.password);
     if (!isPasswordCorrect) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    // Debug log JWT secret
-    console.log("JWT_SECRET (login):", getJwtSecret());
-
     // Generate JWT token
     const token = jwt.sign(
-      {
-        email: existingUser.email,
-        id: existingUser._id,
-      },
-      getJwtSecret(),
+      { email: existingUser.email, id: existingUser._id },
+      process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
     // Send response without password
-    res
-      .status(200)
-      .json({ result: { ...existingUser._doc, password: undefined }, token });
+    res.status(200).json({ result: { ...existingUser._doc, password: undefined }, token });
   } catch (error) {
-    console.error("Login error:", error.message);
+    console.error(error.message);
     res.status(500).json({ message: "Something went wrong..." });
   }
 };
