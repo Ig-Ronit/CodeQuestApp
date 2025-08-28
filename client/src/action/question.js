@@ -7,18 +7,16 @@ export const askquestion = (questiondata, navigate) => async (dispatch) => {
     dispatch(fetchallquestion());
     navigate("/");
   } catch (error) {
-    console.log("Error posting question:", error);
+    throw new Error(`Error posting question: ${error.message}`);
   }
 };
 
 export const fetchallquestion = () => async (dispatch) => {
   try {
     const { data } = await api.getallquestions();
-    console.log("API Response: ", data);
     dispatch({ type: "FETCH_ALL_QUESTIONS", payload: data });
-    console.log("Dispatched FETCH_ALL_QUESTIONS with Payload:", data);
   } catch (error) {
-    console.log("Error fetching Questions:", error);
+    throw new Error(`Error fetching questions: ${error.message}`);
   }
 };
 
@@ -31,7 +29,7 @@ export const deletequestion = (id, navigate) => async (dispatch) => {
     });
     navigate("/");
   } catch (error) {
-    console.log("Error deleting question:", error);
+    throw new Error(`Error deleting question: ${error.message}`);
   }
 };
 
@@ -40,7 +38,7 @@ export const votequestion = (id, value) => async (dispatch) => {
     const { data } = await api.votequestion(id, value);
     dispatch({ type: "UPDATE_VOTE", payload: data });
   } catch (error) {
-    console.error("Error updating vote: ", error);
+    throw new Error(`Error updating vote: ${error.message}`);
   }
 };
 
@@ -54,34 +52,19 @@ export const postanswer =
           userid,
           noofanswers,
         });
-        console.log("Answer post response:", response);
-
         dispatch(fetchallquestion());
         return response;
       } catch (error) {
-        console.error(
-          "Error posting answer:",
-          error.response ? error.response.data : error.message
-        );
-        throw error;
+        throw new Error(`Error posting answer: ${error.message}`);
       }
     };
 
 export const deleteanswer =
   (questionId, answerId, noofanswers) => async (dispatch) => {
     try {
-      const response = await api.deleteanswer(
-        questionId,
-        answerId,
-        noofanswers
-      );
-      console.log("Delete answer response:", response);
+      await api.deleteanswer(questionId, answerId, noofanswers);
       dispatch(fetchallquestion());
     } catch (error) {
-      console.error(
-        "Error deleting answer:",
-        error.response ? error.response.data : error.message
-      );
-      throw error;
+      throw new Error(`Error deleting answer: ${error.message}`);
     }
   };

@@ -4,9 +4,8 @@ const questionreducer = (state = { data: [] }, action) => {
       return { ...state, data: action.payload };
 
     case "FETCH_ALL_QUESTIONS":
-      console.log("Action Payload for FETCH_ALL_QUESTIONS:", action.payload);
       const newState = { ...state, data: action.payload };
-      console.log("Updated State in Reducer:", newState);
+
       return newState;
 
     case "POST_ANSWER":
