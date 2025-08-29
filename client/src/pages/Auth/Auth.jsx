@@ -5,25 +5,31 @@ import "./Auth.css";
 import icon from "../../assets/icon.png";
 import Aboutauth from "./Aboutauth";
 import { signup, login } from "../../action/auth";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 const Auth = () => {
   const [issignup, setissignup] = useState(false);
   const [name, setname] = useState("");
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handlesubmit = async (e) => {
     e.preventDefault();
     if (!email || !password) {
-      alert("Enter email and password");
+      toast.error("Enter email and password");
       return;
     }
-
+    setLoading(true);
     try {
       if (issignup) {
         if (!name) {
-          alert("Enter a name to continue");
+          toast.warn("Enter a name to continue");
+          setLoading(false);
           return;
         }
         await dispatch(signup({ name, email, password }, navigate));
@@ -31,7 +37,10 @@ const Auth = () => {
         await dispatch(login({ email, password }, navigate));
       }
     } catch (error) {
-      console.error("Login failed:", error);
+      toast.error("Invalid credentials. Please try again.");
+      console.error("Auth failed:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -56,9 +65,7 @@ const Auth = () => {
                 id="name"
                 name="name"
                 value={name}
-                onChange={(e) => {
-                  setname(e.target.value);
-                }}
+                onChange={(e) => setname(e.target.value)}
               />
             </label>
           )}
@@ -69,9 +76,7 @@ const Auth = () => {
               id="email"
               name="email"
               value={email}
-              onChange={(e) => {
-                setemail(e.target.value);
-              }}
+              onChange={(e) => setemail(e.target.value)}
             />
           </label>
           <label htmlFor="password">
@@ -79,7 +84,8 @@ const Auth = () => {
               <h4>Password</h4>
               {!issignup && (
                 <p style={{ color: "#007ac6", fontSize: "13px" }}>
-                  Forgot Password?
+                  {" "}
+                  Forgot Password?{" "}
                 </p>
               )}
             </div>
@@ -88,17 +94,26 @@ const Auth = () => {
               name="password"
               id="password"
               value={password}
-              onChange={(e) => {
-                setpassword(e.target.value);
-              }}
+              onChange={(e) => setpassword(e.target.value)}
             />
           </label>
-          <button type="submit" className="auth-btn">
-            {issignup ? "Sign up" : "Log in"}
+          <button type="submit" className="auth-btn" disabled={loading}>
+            {loading
+              ? issignup
+                ? "Creating account..."
+                : "Verifying credentials..."
+              : issignup
+              ? "Sign up"
+              : "Log in"}
           </button>
+          {loading && (
+            <div className="spinner" style={{ marginTop: "10px" }}>
+              <div className="loader"></div>
+            </div>
+          )}
         </form>
         <p>
-          {issignup ? "Already have an account?" : "Don't have an account"}
+          {issignup ? "Already have an account?" : "Don't have an account?"}
           <button
             type="button"
             className="handle-switch-btn"
@@ -108,6 +123,8 @@ const Auth = () => {
           </button>
         </p>
       </div>
+
+      <ToastContainer position="top-right" autoClose={3000} />
     </section>
   );
 };

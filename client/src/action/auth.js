@@ -1,43 +1,54 @@
 import * as api from "../api";
 import { setcurrentuser } from "./currentuser";
 import { fetchallusers } from "./users";
+import { toast } from "react-toastify";
 
-export const signup = (authdata, naviagte) => async (dispatch) => {
-  try {
-    const { data } = await api.signup(authdata);
-    dispatch({ type: "AUTH", data });
-    dispatch(setcurrentuser(JSON.parse(localStorage.getItem("Profile"))));
-    dispatch(fetchallusers());
-    naviagte("/");
-  } catch (error) {
-    console.log(error);
-  }
-};
+// LOGIN
 export const login = (authData, navigate) => async (dispatch) => {
   try {
     const { data } = await api.login(authData);
     const { token, result } = data;
 
-    // Save the token in localStorage
     localStorage.setItem("Token", token);
     localStorage.setItem("Profile", JSON.stringify({ result, token }));
 
-    // Dispatch an action to Redux
     dispatch({ type: "AUTH", payload: { result, token } });
-
-    // Navigate to the homepage or dashboard
+    toast.success("Login successful!");   // ✅ success toast
     navigate("/");
   } catch (error) {
     console.error("Login error:", error.response?.data || error.message);
+    toast.error(error.response?.data?.message || "Invalid credentials"); // ✅ proper error toast
   }
 };
 
+// SIGNUP
+export const signup = (authData, navigate) => async (dispatch) => {
+  try {
+    const { data } = await api.signup(authData);
+
+    localStorage.setItem("Profile", JSON.stringify(data));
+
+    dispatch({ type: "AUTH", data });
+    dispatch(setcurrentuser(data));
+    dispatch(fetchallusers());
+
+    toast.success("Account created successfully!"); // ✅ success toast
+    navigate("/");
+  } catch (error) {
+    console.error("Signup error:", error.response?.data || error.message);
+    toast.error(error.response?.data?.message || "Signup failed"); // ✅ proper error toast
+  }
+};
+
+// LOGOUT
 export const logout = () => (dispatch) => {
   try {
     localStorage.removeItem("Profile");
     localStorage.removeItem("Token");
     dispatch({ type: "LOGOUT" });
+    toast.info("Logged out successfully"); // ✅ info toast
   } catch (error) {
     console.error("Logout Error:", error);
+    toast.error("Error while logging out");
   }
 };

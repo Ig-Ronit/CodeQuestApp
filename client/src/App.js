@@ -6,9 +6,13 @@ import { BrowserRouter as Router } from "react-router-dom";
 import Allroutes from "./Allroutes";
 import { useDispatch } from "react-redux";
 import { fetchallquestion } from "./action/question";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 function App() {
   const [slidein, setslidein] = useState(true);
   const dispatch = useDispatch();
+
   useEffect(() => {
     dispatch(fetchallusers());
     dispatch(fetchallquestion());
@@ -19,6 +23,7 @@ function App() {
       setslidein(false);
     }
   }, []);
+
   const handleslidein = () => {
     if (window.innerWidth <= 768) {
       setslidein((state) => !state);
@@ -30,6 +35,9 @@ function App() {
       <Router>
         <Navbar handleslidein={handleslidein} />
         <Allroutes slidein={slidein} handleslidein={handleslidein} />
+
+        {/* Global Toast Container */}
+        <ToastContainer position="top-right" autoClose={3000} />
       </Router>
     </div>
   );
